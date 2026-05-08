@@ -292,7 +292,7 @@ export default function Home() {
                 {/* 색상 선택 */}
                 <div>
                   <label className="text-xs text-gray-500">색상</label>
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <div className="grid grid-cols-8 gap-1 mt-2">
                     {COLOR_OPTIONS.map(c => (
                       <button key={c.value} onClick={() => setForm({ ...form, color: c.value })}
                         title={c.label}

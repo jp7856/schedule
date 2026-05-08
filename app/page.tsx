@@ -218,10 +218,26 @@ export default function Home() {
         <div className="flex gap-6 mb-6 items-start">
           <div className="bg-white rounded-lg shadow p-4 flex-1 min-w-0 self-start">
             <div className="flex justify-between items-center mb-4">
-              <button onClick={() => setCurrentDate(new Date(year, month - 1))} className="px-3 py-1 hover:bg-gray-100 rounded">◀</button>
-              <h2 className="text-lg font-bold">{year}년 {month + 1}월</h2>
-              <button onClick={() => setCurrentDate(new Date(year, month + 1))} className="px-3 py-1 hover:bg-gray-100 rounded">▶</button>
-            </div>
+  <button onClick={() => setCurrentDate(new Date(year, month - 1))} className="px-3 py-1 hover:bg-gray-100 rounded">◀</button>
+  <h2 className="text-lg font-bold">{year}년 {month + 1}월</h2>
+  <div className="flex items-center gap-3">
+    {(user.role === 'editor' || user.role === 'admin') && (
+      <div className="flex gap-1">
+        {COLOR_OPTIONS.map(c => (
+          <button key={c.value} onClick={() => setForm({ ...form, color: c.value })}
+            title={c.label}
+            className="w-5 h-5 rounded-full border-2 transition-all"
+            style={{
+              backgroundColor: c.value,
+              borderColor: form.color === c.value ? '#1f2937' : 'transparent',
+              transform: form.color === c.value ? 'scale(1.2)' : 'scale(1)'
+            }} />
+        ))}
+      </div>
+    )}
+    <button onClick={() => setCurrentDate(new Date(year, month + 1))} className="px-3 py-1 hover:bg-gray-100 rounded">▶</button>
+  </div>
+</div>
             <div className="grid grid-cols-7 text-center text-sm font-medium text-gray-500 mb-2">
               {['일', '월', '화', '수', '목', '금', '토'].map(d => <div key={d} className="py-1">{d}</div>)}
             </div>

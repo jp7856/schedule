@@ -19,17 +19,21 @@ type Event = {
   sales: number
   memo: string
   created_by: string
+  color: string
 }
 
 const EVENT_TYPES = ['프로모션', '박람회', '세미나', '신제품', '제휴', '기타']
-const TYPE_COLORS: Record<string, string> = {
-  '프로모션': 'bg-blue-500',
-  '박람회': 'bg-green-500',
-  '세미나': 'bg-yellow-500',
-  '신제품': 'bg-purple-500',
-  '제휴': 'bg-pink-500',
-  '기타': 'bg-gray-500',
-}
+
+const COLOR_OPTIONS = [
+  { label: '파랑', value: '#3b82f6' },
+  { label: '초록', value: '#22c55e' },
+  { label: '빨강', value: '#ef4444' },
+  { label: '보라', value: '#a855f7' },
+  { label: '주황', value: '#f97316' },
+  { label: '분홍', value: '#ec4899' },
+  { label: '하늘', value: '#06b6d4' },
+  { label: '노랑', value: '#eab308' },
+]
 
 export default function Home() {
   const [email, setEmail] = useState('')
@@ -44,7 +48,7 @@ export default function Home() {
   const [filterType, setFilterType] = useState('')
   const [form, setForm] = useState({
     title: '', type: '프로모션', start_date: '', end_date: '',
-    expected_sales: '', sales: '', memo: ''
+    expected_sales: '', sales: '', memo: '', color: '#3b82f6'
   })
 
   useEffect(() => {
@@ -90,7 +94,8 @@ export default function Home() {
       start_date: form.start_date, end_date: form.end_date,
       expected_sales: Number(form.expected_sales) || 0,
       sales: Number(form.sales) || 0,
-      memo: form.memo, created_by: user?.email
+      memo: form.memo, created_by: user?.email,
+      color: form.color
     }
     if (editingEvent) {
       await supabase.from('events').update(payload).eq('id', editingEvent.id)
@@ -107,7 +112,8 @@ export default function Home() {
       title: event.title, type: event.type,
       start_date: event.start_date, end_date: event.end_date,
       expected_sales: String(event.expected_sales),
-      sales: String(event.sales), memo: event.memo || ''
+      sales: String(event.sales), memo: event.memo || '',
+      color: event.color || '#3b82f6'
     })
   }
 
@@ -118,7 +124,7 @@ export default function Home() {
   }
 
   const resetForm = () => {
-    setForm({ title: '', type: '프로모션', start_date: '', end_date: '', expected_sales: '', sales: '', memo: '' })
+    setForm({ title: '', type: '프로모션', start_date: '', end_date: '', expected_sales: '', sales: '', memo: '', color: '#3b82f6' })
     setEditingEvent(null)
   }
 
@@ -175,7 +181,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* 헤더 */}
       <div className="bg-white shadow px-6 py-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">📊 행사 매출 관리 대시보드</h1>
         <div className="flex items-center gap-4">
@@ -187,32 +192,30 @@ export default function Home() {
       <div className="max-w-7xl mx-auto p-6">
 
         {/* KPI 카드 */}
-<div className="grid grid-cols-4 gap-4 mb-6">
-  <div className="bg-white rounded-lg p-4 shadow">
-    <p className="text-sm text-gray-500">이번 달 행사 수</p>
-    <p className="text-2xl font-bold text-blue-600">{monthEvents.length}건</p>
-  </div>
-  <div className="bg-white rounded-lg p-4 shadow">
-    <p className="text-sm text-gray-500">이번 달 목표 매출</p>
-    <p className="text-2xl font-bold text-orange-500">{fmt(totalExpected)}원</p>
-  </div>
-  <div className="bg-white rounded-lg p-4 shadow">
-    <p className="text-sm text-gray-500">이번 달 실제 매출</p>
-    <p className="text-2xl font-bold text-green-600">{fmt(totalSales)}원</p>
-  </div>
-  <div className="bg-white rounded-lg p-4 shadow">
-    <p className="text-sm text-gray-500">목표 대비 달성률</p>
-    <p className="text-2xl font-bold text-purple-600">{achieveRate}%</p>
-    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-      <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${Math.min(achieveRate, 100)}%` }} />
-    </div>
-  </div>
-</div>
+        <div className="grid grid-cols-4 gap-4 mb-6">
+          <div className="bg-white rounded-lg p-4 shadow">
+            <p className="text-sm text-gray-500">이번 달 행사 수</p>
+            <p className="text-2xl font-bold text-blue-600">{monthEvents.length}건</p>
+          </div>
+          <div className="bg-white rounded-lg p-4 shadow">
+            <p className="text-sm text-gray-500">이번 달 목표 매출</p>
+            <p className="text-2xl font-bold text-orange-500">{fmt(totalExpected)}원</p>
+          </div>
+          <div className="bg-white rounded-lg p-4 shadow">
+            <p className="text-sm text-gray-500">이번 달 실제 매출</p>
+            <p className="text-2xl font-bold text-green-600">{fmt(totalSales)}원</p>
+          </div>
+          <div className="bg-white rounded-lg p-4 shadow">
+            <p className="text-sm text-gray-500">목표 대비 달성률</p>
+            <p className="text-2xl font-bold text-purple-600">{achieveRate}%</p>
+            <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+              <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${Math.min(achieveRate, 100)}%` }} />
+            </div>
+          </div>
+        </div>
 
-        {/* 메인 레이아웃: 달력 좌측 + 폼 우측 */}
+        {/* 달력 + 폼 */}
         <div className="flex gap-6 mb-6 items-start">
-
-          {/* 달력 */}
           <div className="bg-white rounded-lg shadow p-4 flex-1 min-w-0">
             <div className="flex justify-between items-center mb-4">
               <button onClick={() => setCurrentDate(new Date(year, month - 1))} className="px-3 py-1 hover:bg-gray-100 rounded">◀</button>
@@ -230,7 +233,8 @@ export default function Home() {
                       <p className="text-xs text-gray-600 mb-1">{day}</p>
                       {getEventsForDay(day).map(e => (
                         <div key={e.id} onClick={() => handleEdit(e)}
-                          className={`text-white text-xs rounded px-1 mb-0.5 truncate cursor-pointer ${TYPE_COLORS[e.type] || 'bg-gray-500'}`}>
+                          className="text-white text-xs rounded px-1 mb-0.5 truncate cursor-pointer"
+                          style={{ backgroundColor: e.color || '#3b82f6' }}>
                           {e.title}
                         </div>
                       ))}
@@ -241,7 +245,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 우측 행사 등록/수정 폼 */}
+          {/* 우측 폼 */}
           {(user.role === 'editor' || user.role === 'admin') && (
             <div className="bg-white rounded-lg shadow p-4 w-72 flex-shrink-0 sticky top-6">
               <h3 className="font-bold text-lg mb-4">
@@ -284,6 +288,24 @@ export default function Home() {
                       className="w-full border rounded px-2 py-1.5 mt-1 text-sm" placeholder="0" />
                   </div>
                 </div>
+
+                {/* 색상 선택 */}
+                <div>
+                  <label className="text-xs text-gray-500">색상</label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {COLOR_OPTIONS.map(c => (
+                      <button key={c.value} onClick={() => setForm({ ...form, color: c.value })}
+                        title={c.label}
+                        className="w-7 h-7 rounded-full border-2 transition-all"
+                        style={{
+                          backgroundColor: c.value,
+                          borderColor: form.color === c.value ? '#1f2937' : 'transparent',
+                          transform: form.color === c.value ? 'scale(1.2)' : 'scale(1)'
+                        }} />
+                    ))}
+                  </div>
+                </div>
+
                 <div>
                   <label className="text-xs text-gray-500">메모</label>
                   <textarea value={form.memo} onChange={e => setForm({ ...form, memo: e.target.value })}
@@ -322,38 +344,37 @@ export default function Home() {
               className="px-3 py-2 bg-gray-200 rounded text-sm hover:bg-gray-300">초기화</button>
           </div>
 
-          {/* 요약 */}
-<div className="grid grid-cols-4 gap-4 mb-4">
-  <div className="bg-white border rounded-lg p-4 shadow-sm">
-    <p className="text-sm text-gray-500">행사 수</p>
-    <p className="text-2xl font-bold text-blue-600">{filteredEvents.length}건</p>
-  </div>
-  <div className="bg-white border rounded-lg p-4 shadow-sm">
-    <p className="text-sm text-gray-500">목표 매출 합계</p>
-    <p className="text-2xl font-bold text-orange-500">{fmt(filteredEvents.reduce((s, e) => s + e.expected_sales, 0))}원</p>
-  </div>
-  <div className="bg-white border rounded-lg p-4 shadow-sm">
-    <p className="text-sm text-gray-500">실제 매출 합계</p>
-    <p className="text-2xl font-bold text-green-600">{fmt(filteredEvents.reduce((s, e) => s + e.sales, 0))}원</p>
-  </div>
-  <div className="bg-white border rounded-lg p-4 shadow-sm">
-    <p className="text-sm text-gray-500">달성률</p>
-    <p className="text-2xl font-bold text-purple-600">
-      {filteredEvents.reduce((s, e) => s + e.expected_sales, 0) > 0
-        ? Math.round((filteredEvents.reduce((s, e) => s + e.sales, 0) / filteredEvents.reduce((s, e) => s + e.expected_sales, 0)) * 100)
-        : 0}%
-    </p>
-    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-      <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${Math.min(filteredEvents.reduce((s, e) => s + e.expected_sales, 0) > 0 ? Math.round((filteredEvents.reduce((s, e) => s + e.sales, 0) / filteredEvents.reduce((s, e) => s + e.expected_sales, 0)) * 100) : 0, 100)}%` }} />
-    </div>
-  </div>
-</div>
+          <div className="grid grid-cols-4 gap-4 mb-4">
+            <div className="bg-white border rounded-lg p-4 shadow-sm">
+              <p className="text-sm text-gray-500">행사 수</p>
+              <p className="text-2xl font-bold text-blue-600">{filteredEvents.length}건</p>
+            </div>
+            <div className="bg-white border rounded-lg p-4 shadow-sm">
+              <p className="text-sm text-gray-500">목표 매출 합계</p>
+              <p className="text-2xl font-bold text-orange-500">{fmt(filteredEvents.reduce((s, e) => s + e.expected_sales, 0))}원</p>
+            </div>
+            <div className="bg-white border rounded-lg p-4 shadow-sm">
+              <p className="text-sm text-gray-500">실제 매출 합계</p>
+              <p className="text-2xl font-bold text-green-600">{fmt(filteredEvents.reduce((s, e) => s + e.sales, 0))}원</p>
+            </div>
+            <div className="bg-white border rounded-lg p-4 shadow-sm">
+              <p className="text-sm text-gray-500">달성률</p>
+              <p className="text-2xl font-bold text-purple-600">
+                {filteredEvents.reduce((s, e) => s + e.expected_sales, 0) > 0
+                  ? Math.round((filteredEvents.reduce((s, e) => s + e.sales, 0) / filteredEvents.reduce((s, e) => s + e.expected_sales, 0)) * 100)
+                  : 0}%
+              </p>
+              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${Math.min(filteredEvents.reduce((s, e) => s + e.expected_sales, 0) > 0 ? Math.round((filteredEvents.reduce((s, e) => s + e.sales, 0) / filteredEvents.reduce((s, e) => s + e.expected_sales, 0)) * 100) : 0, 100)}%` }} />
+              </div>
+            </div>
+          </div>
 
-          {/* 테이블 */}
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 text-gray-600 text-left">
+                  <th className="px-3 py-2">색상</th>
                   <th className="px-3 py-2">행사명</th>
                   <th className="px-3 py-2">유형</th>
                   <th className="px-3 py-2">기간</th>
@@ -367,9 +388,12 @@ export default function Home() {
               <tbody>
                 {filteredEvents.map(event => (
                   <tr key={event.id} className="border-t hover:bg-gray-50">
+                    <td className="px-3 py-2">
+                      <div className="w-4 h-4 rounded-full" style={{ backgroundColor: event.color || '#3b82f6' }} />
+                    </td>
                     <td className="px-3 py-2 font-medium">{event.title}</td>
                     <td className="px-3 py-2">
-                      <span className={`text-white text-xs px-2 py-0.5 rounded ${TYPE_COLORS[event.type] || 'bg-gray-500'}`}>{event.type}</span>
+                      <span className="text-white text-xs px-2 py-0.5 rounded" style={{ backgroundColor: event.color || '#3b82f6' }}>{event.type}</span>
                     </td>
                     <td className="px-3 py-2 text-gray-500 whitespace-nowrap">{event.start_date} ~ {event.end_date}</td>
                     <td className="px-3 py-2 text-right">{fmt(event.expected_sales)}원</td>
@@ -389,7 +413,7 @@ export default function Home() {
                   </tr>
                 ))}
                 {filteredEvents.length === 0 && (
-                  <tr><td colSpan={8} className="text-center text-gray-400 py-8">행사가 없습니다</td></tr>
+                  <tr><td colSpan={9} className="text-center text-gray-400 py-8">행사가 없습니다</td></tr>
                 )}
               </tbody>
             </table>

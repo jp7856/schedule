@@ -304,24 +304,6 @@ export default function Home() {
                       className="w-full border rounded px-2 py-1.5 mt-1 text-sm" placeholder="0" />
                   </div>
                 </div>
-
-                {/* 색상 선택 */}
-                <div>
-                  <label className="text-xs text-gray-500">색상</label>
-                  <div className="grid grid-cols-8 gap-1 mt-2">
-                    {COLOR_OPTIONS.map(c => (
-                      <button key={c.value} onClick={() => setForm({ ...form, color: c.value })}
-                        title={c.label}
-                        className="w-5 h-5 rounded-full border-2 transition-all"
-                        style={{
-                          backgroundColor: c.value,
-                          borderColor: form.color === c.value ? '#1f2937' : 'transparent',
-                          transform: form.color === c.value ? 'scale(1.2)' : 'scale(1)'
-                        }} />
-                    ))}
-                  </div>
-                </div>
-
                 <div>
                   <label className="text-xs text-gray-500">메모</label>
                   <textarea value={form.memo} onChange={e => setForm({ ...form, memo: e.target.value })}

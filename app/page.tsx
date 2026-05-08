@@ -216,7 +216,7 @@ export default function Home() {
 
         {/* 달력 + 폼 */}
         <div className="flex gap-6 mb-6 items-start">
-          <div className="bg-white rounded-lg shadow p-4 flex-1 min-w-0">
+          <div className="bg-white rounded-lg shadow p-4 flex-1 min-w-0 self-start">
             <div className="flex justify-between items-center mb-4">
               <button onClick={() => setCurrentDate(new Date(year, month - 1))} className="px-3 py-1 hover:bg-gray-100 rounded">◀</button>
               <h2 className="text-lg font-bold">{year}년 {month + 1}월</h2>
@@ -247,7 +247,7 @@ export default function Home() {
 
           {/* 우측 폼 */}
           {(user.role === 'editor' || user.role === 'admin') && (
-            <div className="bg-white rounded-lg shadow p-4 w-72 flex-shrink-0 sticky top-6">
+            <div className="bg-white rounded-lg shadow p-4 w-72 flex-shrink-0 sticky top-6 self-start">
               <h3 className="font-bold text-lg mb-4">
                 {editingEvent ? '✏️ 행사 수정' : '➕ 행사 등록'}
               </h3>
@@ -296,7 +296,7 @@ export default function Home() {
                     {COLOR_OPTIONS.map(c => (
                       <button key={c.value} onClick={() => setForm({ ...form, color: c.value })}
                         title={c.label}
-                        className="w-7 h-7 rounded-full border-2 transition-all"
+                        className="w-5 h-5 rounded-full border-2 transition-all"
                         style={{
                           backgroundColor: c.value,
                           borderColor: form.color === c.value ? '#1f2937' : 'transparent',
